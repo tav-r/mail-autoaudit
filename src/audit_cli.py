@@ -107,7 +107,7 @@ def main():
         help="mail address of the recipient", required=True
     )
 
-    # configure 'info' subcommand
+    # configure 'check_setup' subcommand
     check_setup_parser = sub_parsers.add_parser(
         "check_setup",
         help="get info about your own IP (useful to check your setup)"
