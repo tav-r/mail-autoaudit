@@ -40,10 +40,6 @@ def send_mails(args):
 
 
 def check_setup(args):
-    """
-    Checks current setup.
-    """
-
     ip = my_ip()
     if is_ipv4(ip):
         reverse_lookup = catch_wrapper(reverse_lookup_ipv4, ip)
