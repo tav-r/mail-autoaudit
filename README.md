@@ -3,16 +3,18 @@
 Checkout help parameters:
 ```bash
 $ ./autoaudit -h
-usage: audit_cli.py [-h] {dns,smtp,send} ...
+usage: audit_cli.py [-h] {dns,smtp,send,check_setup} ...
 
 positional arguments:
-  {dns,smtp,send}  sub-commands help
-    dns            check mail-specific DNS config
-    smtp           scan SMTP server for security issues
-    send           send various test emails
+  {dns,smtp,send,check_setup}
+                        sub-commands help
+    dns                 check mail-specific DNS config
+    smtp                scan SMTP server for security issues
+    send                send various test emails
+    check_setup         get info about your own IP (useful to check your setup)
 
 optional arguments:
-  -h, --help       show this help message and exit
+  -h, --help            show this help message and exit
 $ ./autoaudit dns -h
 usage: audit_cli.py dns [-h] domain
 
@@ -41,6 +43,13 @@ optional arguments:
                         hostname of the sending server
   -r RECIPIENT, --recipient RECIPIENT
                         mail address of the recipient
+$ ./autoaudit check_setup -h
+usage: audit_cli.py check_setup [-h] [-d DOMAIN]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d DOMAIN, --domain DOMAIN
+                        the domain you want to use for testing
 ```
 
 ### Examples

@@ -115,7 +115,7 @@ def main():
     check_setup_parser.set_defaults(func=check_setup)
     check_setup_parser.add_argument(
         "-d", "--domain", dest="domain",
-        help="the domain you think resolves to your IP", required=False
+        help="the domain you want to use for testing", required=False
     )
 
     args = ap.parse_args()
