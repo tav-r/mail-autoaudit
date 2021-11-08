@@ -42,13 +42,6 @@ def send_mails(args):
 def check_setup(args):
     """
     Checks current setup.
-
-    The idea is to provide an easy way to check if the IP your testing with
-    matches the expected conditions, e.g., if it is SPF aligned for the
-    domain you specified etc. The following info is gathered:
-    - current IP address
-    - result of reverse lookup of current IP address
-    - SPF record for domain specified with '-d' parameter (if specified)
     """
 
     ip = my_ip()
