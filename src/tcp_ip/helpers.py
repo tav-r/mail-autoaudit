@@ -1,5 +1,6 @@
 from typing import Callable
 from ipaddress import AddressValueError, IPv4Address, IPv6Address
+from functools import partial
 
 import requests
 
@@ -15,8 +16,8 @@ def is_ip(
     return True
 
 
-is_ipv4 = lambda address: is_ip(address, IPv4Address)
-is_ipv6 = lambda address: is_ip(address, IPv6Address)
+is_ipv4 = partial(is_ip, type_=IPv4Address)
+is_ipv6 = partial(is_ip, type_=IPv6Address)
 
 
 def my_ip():

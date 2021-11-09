@@ -59,5 +59,5 @@ def send_eicar(
         port,
         rcpt_to,
         sender_host,
-        MIMEText("".join([chr(b ^ 0x80) for b in eicar_xor]))
+        MIMEText("".join(chr(b ^ 0x80) for b in eicar_xor))
     )

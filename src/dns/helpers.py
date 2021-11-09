@@ -29,4 +29,5 @@ def reverse_lookup_ipv4(ip: str):
 
 
 def reverse_lookup_ipv6(ip: str):
-    return resolve(f"{'.'.join(IPv6Address(ip).exploded.replace(':', '')[::-1])}.ip6.arpa", "PTR")
+    reversed_ipv6 = '.'.join(IPv6Address(ip).exploded.replace(':', '')[::-1])
+    return resolve(f"{reversed_ipv6}.ip6.arpa", "PTR")

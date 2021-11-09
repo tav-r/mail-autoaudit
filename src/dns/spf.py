@@ -8,6 +8,13 @@ def is_spf_entry(entry: str):
         ":" in entry
 
 
+def retrieve_spf_records(domain: str):
+    return filter(
+        lambda s: s.startswith("v=spf1 "),
+        resolve(domain, "TXT")
+    )
+
+
 def parse_record_entry(entry: str):
     type_, addr = entry.split(":", 1)
 
@@ -20,15 +27,15 @@ def parse_record_entry(entry: str):
     if type_ == "a":
         return {addr: resolve(addr, "A")}
 
+    return dict()
+
 
 def spf_record(domain: str):
+    spf_parts = (entry for record in (
+        s.split(" ") for s in retrieve_spf_records(domain)
+    ) for entry in record)
+
     return [parse_record_entry(e) for e in filter(
         is_spf_entry,
-        (entry for record in map(
-            lambda s: s.split(" "),
-            filter(
-                lambda s: s.startswith("v=spf1 "),
-                resolve(domain, "TXT")
-            )
-         ) for entry in record)
+        spf_parts
     )]
