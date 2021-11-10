@@ -36,8 +36,10 @@ def smtp_scan(args: Namespace):
 
 
 def send_mails(args):
-    for n, f in send_funcs.items():
-        f(args.host, args.port, args.recipient, args.sender_addr)
+    return {
+        n: f(args.host, args.port, args.recipient, args.sender_addr)
+        for n, f in send_funcs.items()
+    }
 
 
 def check_setup(args):
