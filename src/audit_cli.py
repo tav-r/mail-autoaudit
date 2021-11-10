@@ -45,6 +45,8 @@ def check_setup(args):
         reverse_lookup = catch_wrapper(reverse_lookup_ipv4, ip)
     elif is_ipv6(ip):
         reverse_lookup = catch_wrapper(reverse_lookup_ipv6, ip)
+    else:
+        raise ValueError(f"{ip} is not an IP")
 
     return {
         "your_ip": ip,

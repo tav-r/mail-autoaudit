@@ -5,10 +5,7 @@ from functools import partial
 import requests
 
 
-def is_ip(
-    address: str,
-    type_: Callable
-):
+def is_ip(address: str, type_: Callable):
     try:
         type_(address)
     except AddressValueError:
