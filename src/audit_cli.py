@@ -55,8 +55,8 @@ def check_setup(args):
         "your_ip": ip,
         "reverse_lookup": reverse_lookup,
         args.sender_addr.split("@").pop(): {
-            "spf": catch_wrapper(spf_record, args.domain.split("@").pop())
-        } if args.domain else dict()
+            "spf": catch_wrapper(spf_record, args.sender_addr.split("@").pop())
+        } if args.sender_addr else dict()
     }
 
 
