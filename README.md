@@ -15,7 +15,7 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-$ ./autoaudit dns -h
+$ /autoaudit dns -h
 usage: audit_cli.py dns [-h] domain
 
 positional arguments:
@@ -24,32 +24,32 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 $ ./autoaudit smtp -h
-usage: audit_cli.py smtp [-h] -t HOST [-p PORT] -s SENDER_HOST
+usage: audit_cli.py smtp [-h] -t HOST [-p PORT] -s SENDER_ADDR
 
 optional arguments:
   -h, --help            show this help message and exit
   -t HOST, --host HOST  mail server address
   -p PORT, --port PORT  SMTP server port
-  -s SENDER_HOST, --sender-host SENDER_HOST
-                        hostname of the sending server
+  -s SENDER_ADDR, --sender-address SENDER_ADDR
+                        email address used to send mails
 $ ./autoaudit send -h
-usage: audit_cli.py send [-h] -t HOST [-p PORT] -s SENDER_HOST -r RECIPIENT
+usage: audit_cli.py send [-h] -t HOST [-p PORT] -s SENDER_ADDR -r RECIPIENT
 
 optional arguments:
   -h, --help            show this help message and exit
   -t HOST, --host HOST  mail server address
   -p PORT, --port PORT  SMTP server port
-  -s SENDER_HOST, --sender-host SENDER_HOST
-                        hostname of the sending server
+  -s SENDER_ADDR, --sender-address SENDER_ADDR
+                        email address used to send mails
   -r RECIPIENT, --recipient RECIPIENT
                         mail address of the recipient
 $ ./autoaudit check_setup -h
-usage: audit_cli.py check_setup [-h] [-d DOMAIN]
+usage: audit_cli.py check_setup [-h] -s SENDER_ADDR
 
 optional arguments:
   -h, --help            show this help message and exit
-  -d DOMAIN, --domain DOMAIN
-                        the domain you want to use for testing
+  -s SENDER_ADDR, --sender-address SENDER_ADDR
+                        email address used to send mails
 ```
 
 ### Examples
@@ -202,7 +202,7 @@ $ ./autoaudit smtp -t mail.anything.anywhere -p 25 -s test@test.com
 5. STARTLS optional (downgrade attack) ✅
 6. Malware
     - EICAR test ✅
-    - Zipped EICAR test
+    - Zipped EICAR test ✅
     - PE file
     - Excel with macro
     - Word with macro
@@ -212,6 +212,9 @@ $ ./autoaudit smtp -t mail.anything.anywhere -p 25 -s test@test.com
 10. Check NTLM auth
 11. Username enumeration, with wordlist (VRFY, EXPN or RCPT TO)
 12. Message size
+13. Invalid domain in "MAIL FROM:" and "From:" header ✅
+14. Spoof mail to look like it came from the recipient itself ✅
+15. Invalid domain in EHLO, "MAIL FROM:" and "From:" header ✅
 
 ## DNS tests
 1. Get relevant records
