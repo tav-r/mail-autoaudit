@@ -1,11 +1,12 @@
 import json
 
-from smtp import scan_funcs, send_funcs
-from dns import dns_checks
-from dns.spf import spf_record
-from dns.helpers import reverse_lookup_ipv4, reverse_lookup_ipv6
-from tcp_ip.helpers import my_ip, is_ipv4, is_ipv6
 from argparse import ArgumentParser, Namespace
+
+from autoaudit import scan_funcs, send_funcs
+from autoaudit.dns import dns_checks
+from autoaudit.dns.spf import spf_record
+from autoaudit.dns.helpers import reverse_lookup_ipv4, reverse_lookup_ipv6
+from autoaudit.tcp_ip.helpers import my_ip, is_ipv4, is_ipv6
 
 
 def catch_wrapper(f, *args, **kwargs):
@@ -29,14 +30,14 @@ def smtp_scan(args: Namespace):
         n: f(
             args.host,
             args.port,
-            args.sender_host
+            args.sender_addr
         ) for n, f in scan_funcs.items()
     }
 
 
 def send_mails(args):
     for n, f in send_funcs.items():
-        f(args.host, args.port, args.recipient, args.sender_host)
+        f(args.host, args.port, args.recipient, args.sender_addr)
 
 
 def check_setup(args):
@@ -51,8 +52,8 @@ def check_setup(args):
     return {
         "your_ip": ip,
         "reverse_lookup": reverse_lookup,
-        args.domain: {
-            "spf": catch_wrapper(spf_record, args.domain)
+        args.sender_addr.split("@").pop(): {
+            "spf": catch_wrapper(spf_record, args.domain.split("@").pop())
         } if args.domain else dict()
     }
 
@@ -84,8 +85,8 @@ def main():
         type=int, required=False
     )
     smtp_parser.add_argument(
-        "-s", "--sender-host", dest="sender_host",
-        help="hostname of the sending server", required=True
+        "-s", "--sender-address", dest="sender_addr",
+        help="email address used to send mails", required=True
     )
 
     # configure "send" subcommand
@@ -101,8 +102,8 @@ def main():
         type=int, required=False
     )
     send_parser.add_argument(
-        "-s", "--sender-host", dest="sender_host",
-        help="hostname of the sending server", required=True
+        "-s", "--sender-address", dest="sender_addr",
+        help="email address used to send mails", required=True
     )
     send_parser.add_argument(
         "-r", "--recipient", dest="recipient",
@@ -116,8 +117,8 @@ def main():
     )
     check_setup_parser.set_defaults(func=check_setup)
     check_setup_parser.add_argument(
-        "-d", "--domain", dest="domain",
-        help="the domain you want to use for testing", required=False
+        "-s", "--sender-address", dest="sender_addr",
+        help="email address used to send mails", required=True
     )
 
     args = ap.parse_args()
