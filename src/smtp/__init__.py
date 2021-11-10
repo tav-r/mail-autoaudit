@@ -1,7 +1,7 @@
 from .scan import vrfy_available, expn_available, is_open_relay,\
     optional_starttls
 
-from .send import send_eicar, fake_from
+from .send import send_eicar, send_zipped_eicar, fake_from
 
 scan_funcs = {
     vrfy_available.__name__: vrfy_available,
@@ -12,5 +12,6 @@ scan_funcs = {
 
 send_funcs = {
     fake_from.__name__: fake_from,
-    send_eicar.__name__: send_eicar
+    "send_eicar": send_eicar,
+    "send_zipped_eicar": send_zipped_eicar
 }
