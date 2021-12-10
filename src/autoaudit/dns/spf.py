@@ -3,7 +3,24 @@
 from typing import Dict, List
 from functools import reduce
 from .helpers import resolve
-from ..tcp_ip.helpers import is_ipv4, is_ipv6
+
+
+def flatten_dict_list(dict_list: List[Dict[object, object]])\
+    -> Dict[object, object]:
+    # get a set of all keys for all dicts in the given list
+    keys = set(reduce(
+        lambda x, y: x + y,
+        [list(d.keys()) for d in dict_list],
+        [])
+    )
+
+    # collect all values from all dicts in the given list for each key
+    return {
+        key: reduce(
+        lambda x, y: x + [y],
+        [d[key] for d in dict_list if key in d.keys()],
+        [])
+    for key in keys}
 
 
 def quantified(mechanism: str) -> List[str]:
@@ -20,11 +37,10 @@ def add_quantified_for_all(mechanisms: List[str]) -> List[str]:
 
 def is_spf_entry(entry: str):
     mechanisms_quantified = add_quantified_for_all(
-        ["ip4", "ip6", "a", "include"]
+        ["ip4", "ip6", "a", "include", "mx"]
     )
 
-    return entry.split(":")[0] in mechanisms_quantified and\
-        ":" in entry
+    return entry.split(":")[0] in mechanisms_quantified
 
 
 def retrieve_spf_records(domain: str):
@@ -34,7 +50,7 @@ def retrieve_spf_records(domain: str):
     )
 
 
-def parse_record_entry(entry: str):
+def parse_record_entry(domain: str, entry: str):
 
     def resolve_or_empty(addr: str, record_type: str) -> List[str]:
         try:
@@ -42,8 +58,13 @@ def parse_record_entry(entry: str):
         except ValueError:
             return []
 
-    type_, addr = entry.split(":", 1)
+    if ":" in entry:
+        type_, addr = entry.split(":", 1)
+    else: 
+        # if no value is specified, the domain itself is the value
+        type_, addr = entry, domain
 
+    # each mechanism can have a quantifier +, -, ? or ~
     resolve_mechanisms_quantified = add_quantified_for_all(["a", "mx"])
     recurse_mechanisms_quantified = add_quantified_for_all(["include"])
     return_mechanisms_quantified = add_quantified_for_all(["ip4", "ip6"])
@@ -52,7 +73,8 @@ def parse_record_entry(entry: str):
         return {type_: addr}
 
     if type_ in recurse_mechanisms_quantified:
-        return {type_: {addr: list(spf_record(addr))}}
+        # recursively parse the SPF record of the included domain
+        return {type_: {addr: spf_record(addr)}}
 
     if type_ in resolve_mechanisms_quantified:
         if type_ == "a":
@@ -74,7 +96,7 @@ def spf_record(domain: str):
         s.split(" ") for s in retrieve_spf_records(domain)
     ) for entry in record)
 
-    return [parse_record_entry(e) for e in filter(
+    return flatten_dict_list([parse_record_entry(domain, e) for e in filter(
         is_spf_entry,
         spf_parts
-    )]
+    )])
