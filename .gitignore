@@ -3,6 +3,7 @@ include
 lib
 lib64
 pyvenv.cfg
+share
 **/*.pyc
 .vscode
 *.code-workspace
