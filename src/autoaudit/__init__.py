@@ -17,5 +17,6 @@ send_funcs = {
     mail_from_yourself.__name__: mail_from_yourself,
     ehlo_invalid_domain.__name__: ehlo_invalid_domain,
     "send_eicar": send_eicar,
-    "send_zipped_eicar": send_zipped_eicar
+    "send_zipped_eicar": send_zipped_eicar,
+    "send_gtube": send_gtube
 }
