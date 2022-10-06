@@ -164,3 +164,11 @@ def send_zipped_eicar(host: str, port: int, rcpt_to: str, sender_addr: str):
         "[Audit] Zipped EICAR test file",
         attachment
     )
+
+    
+    def send_gtube(host: str, port: int, rcpt_to: str, sender_addr: str):
+    """Send mail with GTUB spam string."""
+   
+    gtube_string = "XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X"
+    conn = get_conn(host, port, sender_addr)
+    conn.sendmail(sender_addr, rcpt_to, gtube_string+message(sender_addr))
