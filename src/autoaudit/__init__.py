@@ -2,7 +2,8 @@ from .scan import vrfy_available, expn_available, is_open_relay,\
     optional_starttls
 
 from .send import send_eicar, send_zipped_eicar, fake_from_header,\
-    mail_from_invalid_domain, mail_from_yourself, ehlo_invalid_domain
+    mail_from_invalid_domain, mail_from_yourself, ehlo_invalid_domain,\
+    send_gtube
 
 scan_funcs = {
     vrfy_available.__name__: vrfy_available,

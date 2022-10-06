@@ -34,13 +34,15 @@ eicar_xor = b"\xd8\xb5\xcf\xa1\xd0\xa5\xc0\xc1\xd0\xdb\xb4\xdc\xd0\xda\xd8"\
             b"\xcc\xc5\xa1\xa4\xc8\xab\xc8\xaa"
 
 
-def message(sender_addr: str):
-    return "This email was sent as part of an email security audit."\
-           "Please send a screenshot (including the subject) to"\
+def message(sender_addr: str) -> str:
+    return "This email was sent as part of an email security audit. "\
+           "Please send a screenshot (including the subject) to "\
            f"{sender_addr}.\nThanks!"
 
 
-def fake_from_header(host: str, port: int, rcpt_to: str, sender_addr: str):
+def fake_from_header(
+    host: str, port: int, rcpt_to: str, sender_addr: str
+) -> None:
     """
     Send a mail with a random "From:" header which differes from "MAIL FROM:".
     """
@@ -55,7 +57,9 @@ def fake_from_header(host: str, port: int, rcpt_to: str, sender_addr: str):
     )
 
 
-def mail_from_yourself(host: str, port: int, rcpt_to: str, sender_addr: str):
+def mail_from_yourself(
+    host: str, port: int, rcpt_to: str, sender_addr: str
+) -> None:
     """
     Send a mail with "From:" and "MAIL FROM:" set to recipient address.
     """
@@ -71,7 +75,7 @@ def mail_from_yourself(host: str, port: int, rcpt_to: str, sender_addr: str):
 
 def mail_from_invalid_domain(
     host: str, port: int, rcpt_to: str, sender_addr: str
-):
+) -> None:
     """
     Send a mail with "From:" and "MAIL FROM:" set to unresolvable domain addr.
     """
@@ -89,7 +93,7 @@ def mail_from_invalid_domain(
 
 def ehlo_invalid_domain(
     host: str, port: int, rcpt_to: str, sender_addr: str
-):
+) -> None:
     """
     Send a mail with EHLO, "From:" and "MAIL FROM:" set to unresolvable domain
     addr.
@@ -113,7 +117,7 @@ def send_attachment(
     sender_addr: str,
     subject: str,
     attachment: Message
-):
+) -> None:
     """Send mail with file attached."""
 
     msg = MIMEMultipart()
@@ -129,7 +133,7 @@ def send_attachment(
     conn.sendmail(sender_addr, rcpt_to, msg.as_string())
 
 
-def send_eicar(host: str, port: int, rcpt_to: str, sender_addr: str):
+def send_eicar(host: str, port: int, rcpt_to: str, sender_addr: str) -> None:
     """Send mail with EICAR test file attached."""
     attachment = MIMEText("".join(chr(b ^ 0x80) for b in eicar_xor))
     attachment.add_header(
@@ -146,7 +150,9 @@ def send_eicar(host: str, port: int, rcpt_to: str, sender_addr: str):
     )
 
 
-def send_zipped_eicar(host: str, port: int, rcpt_to: str, sender_addr: str):
+def send_zipped_eicar(
+    host: str, port: int, rcpt_to: str, sender_addr: str
+) -> None:
     """Send mail with zipped EICAR test file attached."""
 
     attachment = MIMEBase('application', 'zip')
@@ -165,10 +171,16 @@ def send_zipped_eicar(host: str, port: int, rcpt_to: str, sender_addr: str):
         attachment
     )
 
-    
-    def send_gtube(host: str, port: int, rcpt_to: str, sender_addr: str):
+
+def send_gtube(
+    host: str, port: int, rcpt_to: str, sender_addr: str
+) -> None:
     """Send mail with GTUB spam string."""
-   
-    gtube_string = "XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST-EMAIL*C.34X"
+
+    gtube_string = "XJS*C4JDBQADN1.NSBN3*2IDNEN*GTUBE-STANDARD-ANTI-UBE-TEST"\
+        "-EMAIL*C.34X"
     conn = get_conn(host, port, sender_addr)
-    conn.sendmail(sender_addr, rcpt_to, gtube_string+message(sender_addr))
+    conn.sendmail(
+        sender_addr, rcpt_to,
+        f"{message(sender_addr)}\n\n{gtube_string}"
+    )
