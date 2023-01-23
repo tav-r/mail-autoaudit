@@ -4,7 +4,7 @@ import json
 from ipaddress import IPv6Address
 
 
-def resolve(domain: str, type_: str):
+def resolve(domain: str, type_: str) -> list[str]:
     try:
         return [
             ans["data"] for ans in
@@ -16,18 +16,22 @@ def resolve(domain: str, type_: str):
         raise ValueError(f"Could not resolve domain '{domain}'")
 
 
-def dmarc_record(domain: str):
+def soa(domain: str) -> list[str]:
+    return resolve(domain, "SOA")
+
+
+def dmarc_record(domain: str) -> list[str]:
     return resolve(f"_dmarc.{domain}", "TXT")
 
 
-def mx_record(domain: str):
+def mx_record(domain: str) -> list[str]:
     return resolve(domain, "MX")
 
 
-def reverse_lookup_ipv4(ip: str):
+def reverse_lookup_ipv4(ip: str) -> list[str]:
     return resolve(f"{'.'.join(ip.split('.')[::-1])}.in-addr.arpa", "PTR")
 
 
-def reverse_lookup_ipv6(ip: str):
+def reverse_lookup_ipv6(ip: str) -> list[str]:
     reversed_ipv6 = '.'.join(IPv6Address(ip).exploded.replace(':', '')[::-1])
     return resolve(f"{reversed_ipv6}.ip6.arpa", "PTR")

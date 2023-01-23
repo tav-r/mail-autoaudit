@@ -6,7 +6,7 @@ from .helpers import resolve
 
 
 def flatten_dict_list(dict_list: List[Dict[object, object]])\
-    -> Dict[object, object]:
+        -> Dict[object, object]:
     # get a set of all keys for all dicts in the given list
     keys = set(reduce(
         lambda x, y: x + y,
@@ -17,10 +17,10 @@ def flatten_dict_list(dict_list: List[Dict[object, object]])\
     # collect all values from all dicts in the given list for each key
     return {
         key: reduce(
-        lambda x, y: x + [y],
-        [d[key] for d in dict_list if key in d.keys()],
-        [])
-    for key in keys}
+            lambda x, y: x + [y],
+            [d[key] for d in dict_list if key in d.keys()],
+            [])
+        for key in keys}
 
 
 def quantified(mechanism: str) -> List[str]:
@@ -60,7 +60,7 @@ def parse_record_entry(domain: str, entry: str):
 
     if ":" in entry:
         type_, addr = entry.split(":", 1)
-    else: 
+    else:
         # if no value is specified, the domain itself is the value
         type_, addr = entry, domain
 
@@ -79,9 +79,9 @@ def parse_record_entry(domain: str, entry: str):
     if type_ in resolve_mechanisms_quantified:
         if type_ == "a":
             return {
-                type_ : {
-                    addr: resolve_or_empty(addr, "A") 
-                        + resolve_or_empty(addr, "AAAA")
+                type_: {
+                    addr: resolve_or_empty(addr, "A")
+                    + resolve_or_empty(addr, "AAAA")
                 }
             }
 
