@@ -1,7 +1,7 @@
 # from typing import Iterator
 
 from typing import Dict, List
-from functools import reduce
+from functools import reduce, partial
 from .helpers import resolve
 
 
@@ -35,12 +35,22 @@ def add_quantified_for_all(mechanisms: List[str]) -> List[str]:
     )
 
 
-def is_spf_entry(entry: str):
-    mechanisms_quantified = add_quantified_for_all(
-        ["ip4", "ip6", "a", "include", "mx"]
-    )
+def is_spf_(sep: str, keywords: list[str], entry: str):
+    mechanisms_quantified = add_quantified_for_all(keywords)
 
-    return entry.split(":")[0] in mechanisms_quantified
+    return entry.split(sep)[0] in mechanisms_quantified
+
+
+is_spf_modifier = partial(
+    is_spf_, "=",
+    ["redirect"]
+)
+
+
+is_spf_entry = partial(
+    is_spf_, ":",
+    ["ip4", "ip6", "a", "include", "mx", "redirect"]
+)
 
 
 def retrieve_spf_records(domain: str):
@@ -60,13 +70,17 @@ def parse_record_entry(domain: str, entry: str):
 
     if ":" in entry:
         type_, addr = entry.split(":", 1)
+    elif "=" in entry:
+        type_, addr = entry.split("=", 1)
     else:
         # if no value is specified, the domain itself is the value
         type_, addr = entry, domain
 
     # each mechanism can have a quantifier +, -, ? or ~
     resolve_mechanisms_quantified = add_quantified_for_all(["a", "mx"])
-    recurse_mechanisms_quantified = add_quantified_for_all(["include"])
+    recurse_mechanisms_quantified = add_quantified_for_all(
+        ["include", "redirect"]
+    )
     return_mechanisms_quantified = add_quantified_for_all(["ip4", "ip6"])
 
     if type_ in return_mechanisms_quantified:
@@ -97,6 +111,6 @@ def spf_record(domain: str):
     ) for entry in record)
 
     return flatten_dict_list([parse_record_entry(domain, e) for e in filter(
-        is_spf_entry,
+        lambda s: is_spf_entry(s) or is_spf_modifier(s),
         spf_parts
     )])
