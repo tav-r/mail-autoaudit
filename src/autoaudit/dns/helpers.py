@@ -1,7 +1,7 @@
 import requests
 import json
 
-from ipaddress import IPv6Address
+from ipaddress import IPv6Address, IPv4Address
 
 
 def resolve(domain: str, type_: str) -> list[str]:
@@ -29,9 +29,10 @@ def mx_record(domain: str) -> list[str]:
 
 
 def reverse_lookup_ipv4(ip: str) -> list[str]:
-    return resolve(f"{'.'.join(ip.split('.')[::-1])}.in-addr.arpa", "PTR")
+    reversed_ipv4 = IPv4Address(ip).reverse_pointer
+    return resolve(str(reversed_ipv4), "PTR")
 
 
 def reverse_lookup_ipv6(ip: str) -> list[str]:
-    reversed_ipv6 = '.'.join(IPv6Address(ip).exploded.replace(':', '')[::-1])
-    return resolve(f"{reversed_ipv6}.ip6.arpa", "PTR")
+    reversed_ipv6 = IPv6Address(ip).reverse_pointer
+    return resolve(str(reversed_ipv6), "PTR")
